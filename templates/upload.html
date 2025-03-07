@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Image</title>
+    <style>
+        .upload-container { max-width: 600px; margin: 2rem auto; padding: 2rem; border: 2px dashed #ccc; }
+        .upload-preview { max-width: 300px; display: none; margin: 1rem auto; }
+        .reward-points { color: #ffc107; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        <h1>Upload Eco-Activity</h1>
+        <p class="reward-points">Your Points: {{ reward_points }} 🪙</p>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" id="fileInput" accept="image/*">
+            <button type="submit" class="btn btn-success mt-3">Analyze</button>
+        </form>
+        <img id="preview" class="upload-preview">
+    </div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview').style.display = 'block';
+                document.getElementById('preview').src = e.target.result;
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        });
+    </script>
+</body>
+</html>

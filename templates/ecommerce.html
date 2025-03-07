@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #28a745 !important;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #fff;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-img-top {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: none;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item-remove {
+            cursor: pointer;
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .cart-item-remove:hover {
+            text-decoration: underline;
+        }
+
+        .search-bar {
+            margin-bottom: 2rem;
+        }
+
+        .search-bar input {
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #fffcfc;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #bfbdbd;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        #checkout {
+            background-color: #28a745;
+            border: none;
+            padding: 1rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border-radius: 25px;
+            margin-top: 1.5rem;
+        }
+
+        #checkout:hover {
+            background-color: #218838;
+        }
+
+        .coin-balance {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .reward-points {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Eco-Store</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#cart">Cart (<span id="cart-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Reward Points: <span id="reward-points">0</span> 🪙</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Eco-Friendly Store</h1>
+        <div class="coin-balance">
+            Your Coin Balance: <span id="coin-balance">0</span> coins
+        </div>
+        <div class="search-bar">
+            <input type="text" id="search-input" class="form-control" placeholder="Search for products..."
+                oninput="filterProducts()">
+        </div>
+        
+        <div class="row" id="product-list"></div>
+        
+        <h2 class="mt-5">Shopping Cart</h2>
+        <ul id="cart" class="list-group mb-3"></ul>
+        <div class="text-end mb-3">
+            <strong>Total Cost: <span id="cart-total">0</span> coins</strong>
+        </div>
+        <button id="checkout" class="btn btn-primary w-100" onclick="checkout()">Checkout</button>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: "Eco-Friendly Water Bottle", price: 200, img: "https://images.unsplash.com/photo-1625708458528-802ec79b1ed8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8V2F0ZXIlMjBCb3R0bGV8ZW58MHx8MHx8fDA%3D" },
+            { id: 2, name: "Reusable Grocery Bag", price: 100, img: "https://images.pexels.com/photos/7218927/pexels-photo-7218927.jpeg?auto=compress&cs=tinysrgb&w=600" },
+            { id: 3, name: "Solar-Powered Charger", price: 500, img: "https://media.istockphoto.com/id/949299902/photo/portable-solar-panel-is-on-the-beach.webp?a=1&b=1&s=612x612&w=0&k=20&c=kEWKRIZpGuVNj4EnJsswIyopwDTTHWBP1dbDD39dbpo=" },
+            { id: 4, name: "Bamboo Toothbrush", price: 50, img: "https://plus.unsplash.com/premium_photo-1664544673200-364b1cb04300?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8QmFtYm9vJTIwVG9vdGhicnVzaHxlbnwwfHwwfHx8MA%3D%3D" },
+            { id: 5, name: "Organic Cotton T-Shirt", price: 300, img: "https://plus.unsplash.com/premium_photo-1718913936342-eaafff98834b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Q290dG9uJTIwVCUyMFNoaXJ0fGVufDB8fDB8fHww" },
+            { id: 6, name: "Compostable Phone Case", price: 150, img: "https://plus.unsplash.com/premium_photo-1705554519329-0f8870b906e8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8UGhvbmUlMjBDYXNlfGVufDB8fDB8fHww" },
+            { id: 7, name: "Recycled Notebook", price: 120, img: "https://images.unsplash.com/photo-1625533617580-3977f2651fc0?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8UmVjeWNsZWQlMjBOb3RlYm9va3xlbnwwfHwwfHx8MA%3D%3D" },
+            { id: 8, name: "Wooden Cutlery Set", price: 180, img: "https://images.pexels.com/photos/4397817/pexels-photo-4397817.jpeg?auto=compress&cs=tinysrgb&w=600" },
+            { id: 9, name: "Eco-Friendly Backpack", price: 400, img: "https://plus.unsplash.com/premium_photo-1723649902734-60ec42167731?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fEVjbyUyMEZyaWVuZGx5JTIwQmFja3BhY2t8ZW58MHx8MHx8fDA%3D" },
+            { id: 10, name: "Reusable Coffee Cup", price: 100, img: "https://plus.unsplash.com/premium_photo-1670015230537-5c6253727a36?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fHJlc3VzYmxlJTIwQ29mZmVlJTIwQ3VwfGVufDB8fDB8fHww" }
+        ];
+
+        const elements = {
+            productList: document.getElementById('product-list'),
+            cart: document.getElementById('cart'),
+            coinBalance: document.getElementById('coin-balance'),
+            cartTotal: document.getElementById('cart-total'),
+            rewardPoints: document.getElementById('reward-points'),
+            cartCount: document.getElementById('cart-count')
+        };
+
+        let cartItems = [];
+
+        // Balance synchronization
+        async function syncBalance() {
+            try {
+                const response = await fetch('/get-reward-points');
+                const data = await response.json();
+                elements.coinBalance.textContent = data.reward_points;
+                elements.rewardPoints.textContent = data.reward_points;
+            } catch (error) {
+                console.error("Balance sync failed:", error);
+            }
+        }
+
+        // Cart management
+        function updateCart() {
+            elements.cart.innerHTML = "";
+            let totalCost = 0;
+            
+            cartItems.forEach((item, index) => {
+                totalCost += item.price;
+                const listItem = document.createElement("li");
+                listItem.classList.add("list-group-item");
+                listItem.innerHTML = `
+                    ${item.name} - ${item.price} coins
+                    <span class="cart-item-remove" onclick="removeFromCart(${index})">Remove</span>
+                `;
+                elements.cart.appendChild(listItem);
+            });
+
+            elements.cartCount.textContent = cartItems.length;
+            elements.cartTotal.textContent = totalCost;
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                cartItems.push(product);
+                updateCart();
+            }
+        }
+
+        function removeFromCart(index) {
+            cartItems.splice(index, 1);
+            updateCart();
+        }
+
+        // Checkout functionality
+        async function checkout() {
+            const totalCost = cartItems.reduce((sum, item) => sum + item.price, 0);
+            if (!totalCost) return alert("Your cart is empty!");
+
+            try {
+                const response = await fetch('/update-coins', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ amount: totalCost })
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+                
+                const result = await response.json();
+                cartItems = [];
+                updateCart();
+                await syncBalance();
+                alert(`Checkout successful! New balance: ${result.new_balance} coins`);
+            } catch (error) {
+                alert(`Payment failed: ${error.message}`);
+            }
+        }
+
+        // Product rendering
+        function renderProducts(filteredProducts = products) {
+            elements.productList.innerHTML = "";
+            filteredProducts.forEach(product => {
+                const productCard = `
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <img src="${product.img}" class="card-img-top" alt="${product.name}" 
+                                 onerror="this.src='https://via.placeholder.com/400x200?text=Image+Not+Available'">
+                            <div class="card-body">
+                                <h5 class="card-title">${product.name}</h5>
+                                <p class="card-text">Price: ${product.price} coins</p>
+                                <button class="btn btn-success" onclick="addToCart(${product.id})">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                elements.productList.innerHTML += productCard;
+            });
+        }
+
+        // Search functionality
+        function filterProducts() {
+            const searchInput = document.getElementById("search-input").value.toLowerCase();
+            const filteredProducts = products.filter(product =>
+                product.name.toLowerCase().includes(searchInput)
+            );
+            renderProducts(filteredProducts);
+        }
+
+        // Initial setup
+        window.onload = async () => {
+            await syncBalance();
+            renderProducts();
+        };
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

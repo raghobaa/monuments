@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analysis Result</title>
+    <style>
+        .result-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        .image-preview {
+            max-width: 500px;
+            margin: 1rem 0;
+        }
+        .analysis-box {
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .reward-points {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container"></div>
+    <div class="result-container">
+        <h1>Analysis Result</h1>
+        <img src="{{ url_for('static', filename='uploads/' + filename) }}" 
+             class="image-preview"
+             alt="Uploaded image">
+        
+        <div class="analysis-box">
+            <h2>Gemini Analysis:</h2>
+            <p>{{ analysis }}</p>
+            <p class="reward-points">Your current reward points: {{ reward_points }} 🪙</p>
+        </div>
+        
+        <a href="/">Analyze Another Image</a>
+        <br>
+        <a href="ecommerce.html">Go to Eco-Store</a> <!-- Link to your ecommerce website -->
+    </div>
+</body>
+</html>
