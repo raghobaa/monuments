@@ -8,10 +8,10 @@ import io
 genai.configure(api_key="AIzaSyDjhMXkOZvtIEnjF6jo56cdxmOM11xxYO0")
 
 # Set up Streamlit app
-st.set_page_config(page_title="🧠 Gemini Image Analyzer", layout="centered")
-st.title("🧠 Gemini Image Analyzer")
+st.set_page_config(page_title="🧠 Monument Story Narrator", layout="centered")
+st.title("🧠 Monument Story Narrator")
 st.markdown("""
-Upload an image and let **Gemini** identify and analyze the monument in-depth.
+Upload an image of a monument, and let **Gemini** narrate its fascinating history and stories.
 """)
 
 # Add language selection
@@ -37,61 +37,37 @@ uploaded_file = st.file_uploader("📤 Upload a monument image", type=["jpg", "j
 if uploaded_file:
     st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
 
-    if st.button("🔍 Analyze Monument"):
-        with st.spinner("Analyzing the monument..."):
+    if st.button("🔍 Narrate the Story"):
+        with st.spinner("Analyzing the monument and narrating the story..."):
             try:
                 image_bytes = uploaded_file.getvalue()
 
-                # Define prompt
-                prompt = """**Monument Analysis Request**
-Identify and analyze the historical monument in this image. Provide a detailed report including:
+                # Define prompt with storytelling focus
+                prompt = """**Monument Story Narration Request**
+Identify and narrate the history and stories of the historical monument in this image. Provide an engaging and captivating narrative including:
 
-1. **Official Identification**
-   - Official name (original language + English translation)
-   - Alternative names/aliases
-   - UNESCO World Heritage status (if applicable)
+1. **Historical Context** 🏰
+   - Tell the story behind the monument's construction.
+   - Include historical events and figures associated with it.
+   - Include local legends, myths, or anecdotes tied to the monument.
 
-2. **Geographical Context** 🌍
-   - Exact geographical coordinates
-   - Modern country and region
-   - Historical territory name during construction
+2. **Cultural Significance** 📜
+   - Describe the cultural and political importance of the monument.
+   - Include any symbolic meaning or rituals associated with it.
+   - Tell how it has influenced the local community or the world.
 
-3. **Historical Timeline** 🕰️
-   - Construction start/end dates
-   - Original purpose/function
-   - Key historical events associated
-   - Major renovations/restorations
-
-4. **Architectural Analysis** 🏛️
-   - Architectural style/movement
-   - Construction materials/methods
-   - Notable design features
-   - Engineering innovations
-
-5. **Cultural Significance** 📜
-   - Religious/political/cultural importance
-   - Associated historical figures
-   - Modern-day usage/ceremonies
-
-6. **Preservation Status** 🔍
-   - Current condition
-   - Conservation efforts
-   - Public access information
-
-7. **Interesting Facts** 💡
-   - 3-5 lesser-known facts
-   - Local legends/myths
-   - Pop culture references
+3. **Unique Stories and Legends** 📖
+   - Share lesser-known stories, myths, or local legends about the monument.
+   - Highlight interesting or dramatic events that occurred at the site.
+   - Tell a compelling narrative that draws in the listener.
 
 **Formatting Requirements:**
-- Use markdown with headings (##, ###)
-- Include relevant emojis in section headers
-- Use bullet points for lists
-- Highlight key dates in **bold**
-- Provide metric and imperial measurements where applicable
-- Cite 1-2 reputable historical sources
+- Use narrative-style text, similar to storytelling.
+- Use headings for each major section (##, ###).
+- Maintain a clear and engaging tone to captivate the listener.
 
-**Tone:** Academic yet accessible, suitable for educated tourists"""
+**Tone:** Narrative, engaging, and suitable for a captivating storytelling experience.
+"""
 
                 # Generate response
                 model = genai.GenerativeModel("gemini-2.0-flash")
@@ -101,16 +77,16 @@ Identify and analyze the historical monument in this image. Provide a detailed r
                 ])
 
                 # Show response
-                st.success("✅ Monument Identified and Analyzed!")
-                st.markdown("### 📝 Analysis Report")
-                analysis_text = response.text if response.text else "_No response generated._"
-                st.markdown(analysis_text)
+                st.success("✅ Story Generated!")
+                st.markdown("### 📝 Monument Story")
+                story_text = response.text if response.text else "_No story generated._"
+                st.markdown(story_text)
 
                 # Text-to-Speech Conversion
                 with st.spinner("🔊 Generating audio narration..."):
                     try:
                         tts = gTTS(
-                            text=analysis_text,
+                            text=story_text,
                             lang=LANGUAGE_CODES[language],
                             slow=False
                         )
